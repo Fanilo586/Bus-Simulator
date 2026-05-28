@@ -5,7 +5,7 @@ import JoinForm          from './components/JoinForm.jsx';
 import PassengerDashboard from './pages/PassengerDashboard.jsx';
 import DriverDashboard    from './pages/DriverDashboard.jsx';
 
-const SERVER = import.meta.env.VITE_SERVER_URL || 'http://localhost:4000';
+const SERVER = import.meta.env.VITE_SERVER_URL || 'https://bus-simulator-qxb0.onrender.com';
 
 // App states: 'select' | 'join' | 'dashboard'
 export default function App() {
