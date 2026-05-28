@@ -1,0 +1,67 @@
+.join-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg);
+}
+
+.join-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.join-top { text-align: center; }
+.join-icon { font-size: 3rem; display: block; margin-bottom: 0.75rem; }
+.join-top h2 { font-size: 1.5rem; font-weight: 700; }
+.join-sub { color: var(--text2); font-size: 0.9rem; margin-top: 0.5rem; }
+
+.join-form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.join-form label {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  font-size: 0.85rem; font-weight: 600; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.join-form input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  font-family: var(--font-head);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.join-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+}
+
+.join-btn {
+  padding: 1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  margin-top: 0.5rem;
+}
+.join-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.join-btn.passenger { background: var(--accent);  color: var(--bg); }
+.join-btn.driver    { background: var(--accent2); color: var(--bg); }
+
+.join-geo-note { color: var(--text3); font-size: 0.75rem; text-align: center; }

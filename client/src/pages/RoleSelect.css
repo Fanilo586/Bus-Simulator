@@ -1,0 +1,353 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Écran principal ── */
+.android-screen {
+  font-family: 'Roboto', sans-serif;
+  background: #0F1117;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Barre de statut ── */
+.status-bar {
+  width: 100%;
+  background: #0F1117;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #E0E0E0;
+}
+
+.status-icons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.status-icons svg {
+  width: 16px;
+  height: 16px;
+  fill: #E0E0E0;
+}
+
+/* ── Hero / Header bleu ── */
+.hero-bg {
+  width: 100%;
+  background: linear-gradient(160deg, #1A237E 0%, #0D47A1 40%, #01579B 100%);
+  padding: 28px 20px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  left: -30px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ── En-tête app ── */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.app-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app-title {
+  color: #fff;
+}
+
+.app-title h1 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.app-title p {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Roboto Mono', monospace;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+
+/* ── Badge "en ligne" ── */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3); }
+  50%       { box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.1); }
+}
+
+.hero-badge span {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ── Zone de contenu ── */
+.content-area {
+  width: 100%;
+  background: #0F1117;
+  flex: 1;
+  padding: 20px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #78909C;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+/* ── Cartes de rôle ── */
+.role-card {
+  width: 100%;
+  border-radius: 16px;
+  padding: 18px;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, opacity 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.role-card:active {
+  transform: scale(0.975);
+  opacity: 0.9;
+}
+
+.passenger-card {
+  background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #388E3C 100%);
+  box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4);
+}
+
+.driver-card {
+  background: linear-gradient(135deg, #E65100 0%, #F57C00 50%, #FB8C00 100%);
+  box-shadow: 0 4px 20px rgba(245, 124, 0, 0.4);
+}
+
+.card-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Haut de carte ── */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.card-emoji-wrap {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.card-arrow {
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+  letter-spacing: -0.3px;
+}
+
+/* ── Liste de fonctionnalités ── */
+.feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.feat-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #fff;
+}
+
+/* ── Séparateur & CTA ── */
+.card-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 14px 0;
+}
+
+.card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.card-cta-arrow {
+  font-size: 18px;
+}
+
+/* ── Effet ripple Material ── */
+.ripple-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ripple-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  animation: ripple-anim 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes ripple-anim {
+  from { transform: scale(0); opacity: 1; }
+  to   { transform: scale(1); opacity: 0; }
+}
+
+/* ── Chips bas de page ── */
+.bottom-bar {
+  width: 100%;
+  background: #0F1117;
+  padding: 12px 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bottom-chip {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: #78909C;
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* ── Barre de navigation Android ── */
+.nav-bar {
+  width: 100%;
+  background: #0F1117;
+  padding: 8px 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-indicator {
+  width: 120px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}

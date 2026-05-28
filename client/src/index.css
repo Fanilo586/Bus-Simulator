@@ -1,0 +1,76 @@
+/* ─── RESET ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+
+/* ─── DESIGN TOKENS ──────────────────────────────────────────────────── */
+:root {
+  --bg:        #0a0c10;
+  --surface:   #111318;
+  --surface2:  #181c24;
+  --border:    #252b38;
+  --border2:   #2e3848;
+
+  --accent:    #00e5ff;
+  --accent2:   #ff6b35;
+  --green:     #00ff9d;
+  --yellow:    #ffd93d;
+  --red:       #ff4444;
+
+  --text:      #e8edf5;
+  --text2:     #8899b0;
+  --text3:     #4a5568;
+
+  --font-head: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius:    12px;
+  --radius-sm: 6px;
+  --shadow:    0 4px 24px rgba(0,0,0,0.5);
+  --glow-a:    0 0 20px rgba(0,229,255,0.25);
+  --glow-b:    0 0 20px rgba(255,107,53,0.25);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-head);
+  overflow-x: hidden;
+}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ─── LEAFLET OVERRIDES ───────────────────────────────────────────────── */
+.leaflet-container { border-radius: var(--radius); }
+.leaflet-popup-content-wrapper {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  font-family: var(--font-head);
+}
+.leaflet-popup-tip { background: var(--surface2); }
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50%      { opacity:0.4; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.animate-in { animation: fadeUp 0.4s ease both; }
+.pulse       { animation: pulse 2s infinite; }
+
+/* ─── UTILITY ─────────────────────────────────────────────────────────── */
+.mono { font-family: var(--font-mono); }
