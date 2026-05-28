@@ -13,16 +13,21 @@ const io = new Server(httpServer, {
 app.use(cors());
 app.use(express.json());
 
-// ─── IN-MEMORY STATE ───────────────────────────────────────────────────────────
+// ─── ROOT ROUTE (IMPORTANT POUR RENDER) ───────────────────────────────
+app.get("/", (req, res) => {
+  res.send("🚌 Bus Simulator API is running");
+});
+
+// ─── IN-MEMORY STATE ───────────────────────────────────────────────────
 const state = {
-  passengers: new Map(), // socketId -> PassengerData
-  drivers:    new Map(), // socketId -> DriverData
-  buses:      new Map(), // busId    -> BusData (managed by drivers)
+  passengers: new Map(),
+  drivers: new Map(),
+  buses: new Map(),
 };
 
-// ─── GEO UTILS ────────────────────────────────────────────────────────────────
+// ─── GEO UTILS ─────────────────────────────────────────────────────────
 function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371; // km
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -30,6 +35,7 @@ function haversine(lat1, lon1, lat2, lon2) {
     Math.cos((lat1 * Math.PI) / 180) *
       Math.cos((lat2 * Math.PI) / 180) *
       Math.sin(dLon / 2) ** 2;
+
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
@@ -47,9 +53,7 @@ function formatDistance(km) {
   return `${km.toFixed(2)} km`;
 }
 
-// ─── BROADCAST HELPERS ────────────────────────────────────────────────────────
-
-// Send updated view to a single passenger
+// ─── PUSH HELPERS ─────────────────────────────────────────────────────
 function pushToPassenger(socketId) {
   const p = state.passengers.get(socketId);
   if (!p) return;
@@ -65,7 +69,6 @@ function pushToPassenger(socketId) {
   });
 }
 
-// Send updated view to a single driver
 function pushToDriver(socketId) {
   const d = state.drivers.get(socketId);
   if (!d) return;
@@ -75,8 +78,9 @@ function pushToDriver(socketId) {
     .slice(0, 10)
     .map(p => ({ ...p, distanceLabel: formatDistance(p.distance) }));
 
-  // Competitor buses = all buses except this driver's own bus
-  const competitorBuses = [...state.buses.values()].filter(b => b.driverId !== socketId);
+  const competitorBuses = [...state.buses.values()]
+    .filter(b => b.driverId !== socketId);
+
   const nearbyCompetitors = enrichWithDistance(competitorBuses, d.lat, d.lon)
     .slice(0, 5)
     .map(b => ({ ...b, distanceLabel: formatDistance(b.distance) }));
@@ -89,106 +93,95 @@ function pushToDriver(socketId) {
   });
 }
 
-// Broadcast to everyone who is watching this area
-function broadcastAll() {
-  for (const socketId of state.passengers.keys()) pushToPassenger(socketId);
-  for (const socketId of state.drivers.keys())    pushToDriver(socketId);
-}
-
-// ─── SOCKET EVENTS ────────────────────────────────────────────────────────────
+// ─── SOCKET.IO ────────────────────────────────────────────────────────
 io.on('connection', (socket) => {
   console.log(`[+] connected: ${socket.id}`);
 
-  // ── Passenger joins ──────────────────────────────────────────────────────
+  // PASSENGER
   socket.on('passenger:join', ({ name, lat, lon }) => {
     state.passengers.set(socket.id, {
       id: socket.id,
       name: name || `Voyageur-${socket.id.slice(0, 4)}`,
-      lat, lon,
+      lat,
+      lon,
       joinedAt: Date.now(),
     });
-    console.log(`[P] ${name} joined at (${lat}, ${lon})`);
+
     pushToPassenger(socket.id);
-    // Notify drivers of new passenger
-    for (const driverId of state.drivers.keys()) pushToDriver(driverId);
   });
 
-  // ── Passenger updates position ───────────────────────────────────────────
   socket.on('passenger:move', ({ lat, lon }) => {
     const p = state.passengers.get(socket.id);
     if (!p) return;
-    p.lat = lat; p.lon = lon;
+
+    p.lat = lat;
+    p.lon = lon;
+
     pushToPassenger(socket.id);
-    for (const driverId of state.drivers.keys()) pushToDriver(driverId);
   });
 
-  // ── Driver joins ─────────────────────────────────────────────────────────
+  // DRIVER
   socket.on('driver:join', ({ name, lat, lon, busName, busCapacity }) => {
     const busId = uuidv4();
+
     state.buses.set(busId, {
       id: busId,
       driverId: socket.id,
       name: busName || `Bus-${socket.id.slice(0, 4)}`,
       capacity: busCapacity || 30,
-      lat, lon,
+      lat,
+      lon,
       speed: 0,
       heading: 0,
       passengers: 0,
     });
+
     state.drivers.set(socket.id, {
       id: socket.id,
       name: name || `Chauffeur-${socket.id.slice(0, 4)}`,
-      lat, lon,
+      lat,
+      lon,
       busId,
       joinedAt: Date.now(),
     });
-    console.log(`[D] ${name} joined with bus ${busName}`);
+
     pushToDriver(socket.id);
-    // Notify passengers of new bus
-    for (const passId of state.passengers.keys()) pushToPassenger(passId);
   });
 
-  // ── Driver updates position ──────────────────────────────────────────────
   socket.on('driver:move', ({ lat, lon, speed, heading, passengerCount }) => {
     const d = state.drivers.get(socket.id);
     if (!d) return;
-    d.lat = lat; d.lon = lon;
+
+    d.lat = lat;
+    d.lon = lon;
 
     const bus = state.buses.get(d.busId);
     if (bus) {
-      bus.lat = lat; bus.lon = lon;
-      if (speed !== undefined)         bus.speed = speed;
-      if (heading !== undefined)       bus.heading = heading;
+      bus.lat = lat;
+      bus.lon = lon;
+      if (speed !== undefined) bus.speed = speed;
+      if (heading !== undefined) bus.heading = heading;
       if (passengerCount !== undefined) bus.passengers = passengerCount;
     }
 
     pushToDriver(socket.id);
-    for (const passId of state.passengers.keys()) pushToPassenger(passId);
   });
 
-  // ── Ping (keep-alive + refresh) ───────────────────────────────────────────
-  socket.on('ping:refresh', () => {
-    if (state.passengers.has(socket.id)) pushToPassenger(socket.id);
-    if (state.drivers.has(socket.id))    pushToDriver(socket.id);
-  });
-
-  // ── Disconnect ────────────────────────────────────────────────────────────
+  // DISCONNECT
   socket.on('disconnect', () => {
-    if (state.passengers.has(socket.id)) {
-      state.passengers.delete(socket.id);
-      for (const driverId of state.drivers.keys()) pushToDriver(driverId);
-    }
-    if (state.drivers.has(socket.id)) {
-      const d = state.drivers.get(socket.id);
-      if (d) state.buses.delete(d.busId);
+    state.passengers.delete(socket.id);
+
+    const driver = state.drivers.get(socket.id);
+    if (driver) {
+      state.buses.delete(driver.busId);
       state.drivers.delete(socket.id);
-      for (const passId of state.passengers.keys()) pushToPassenger(passId);
     }
+
     console.log(`[-] disconnected: ${socket.id}`);
   });
 });
 
-// ─── REST ENDPOINTS (debug / stats) ──────────────────────────────────────────
+// ─── REST API ─────────────────────────────────────────────────────────
 app.get('/api/stats', (_, res) => {
   res.json({
     passengers: state.passengers.size,
@@ -201,6 +194,9 @@ app.get('/api/buses', (_, res) => {
   res.json([...state.buses.values()]);
 });
 
-// ─── START ────────────────────────────────────────────────────────────────────
+// ─── START SERVER ─────────────────────────────────────────────────────
 const PORT = process.env.PORT || 4000;
-httpServer.listen(PORT, () => console.log(`🚌 Bus Simulator server on http://localhost:${PORT}`));
+
+httpServer.listen(PORT, () => {
+  console.log(`🚌 Bus Simulator server running on port ${PORT}`);
+});
